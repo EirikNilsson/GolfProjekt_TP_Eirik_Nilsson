@@ -1,4 +1,18 @@
 
+def object(object, fase)
+    if fase == 1
+        object = "Move red rectangle"
+    elsif fase == 2
+        object = "Move blue rectangle"
+    elsif fase == 3
+        object = "Move pit"
+    elsif fase == 4
+        object = "Move hill"
+    elsif fase == 5
+        object = "Move hole"
+    end
+    return object
+end
 
 def circle_hit_golfBall?(golfBall, circle)
     golfBall.contains?(circle.x, circle.y) 
