@@ -1,9 +1,14 @@
 require 'ruby2d'
 require 'C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\Code\functions.rb'
 
+set width: 900, height: 700 
+set background: 'black'
+set z: 1
+
 
 golfBall = Circle.new(x: 200, y: 300, radius: 20, color: 'white', z:10)
 hole = Circle.new(x:700, y: 300, radius: 25, color: 'black', z:8)
+border = Rectangle.new(color: 'gray', width:825, height:625, x: 37.5, y: 37.5)
 map = Rectangle.new(x: 50, y: 50, width: 800, height: 600, color: '#109611', z:2)
 obstacle1 = Rectangle.new(width: 50, height: 200, x: 500, y: 200, color: 'red', z: 6)
 obstacle2 = Rectangle.new(x: 500, y: 400, width:200, height:50, color: 'blue', z: 7)
@@ -12,13 +17,10 @@ stroke_text = Text.new('Strokes: 0', x: 400, y: 70, color: 'black', z: 100, size
 count_strokes = Text.new('', x: 350, y: 300, color: 'black', z: 100, size: 50)
 small_hill = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\small_hill.png', x:300, y:50, width: 300, height: 300, z: 5)
 pit = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\pit.png', x:300, y:350, width: 300, height: 300, z: 5)
+powerDot1 = Circle.new(radius: 8, x: 50, color: 'red', z: 1000)
+powerDot2 = Circle.new(radius: 6, x: 70)
+powerDot3 = Circle.new(radius: 4, x: 90)
 
-
-
-
-set width: 900, height: 700 
-set background: 'black'
-set z: 1
 
 start_position_x = nil
 start_position_y = nil
@@ -34,6 +36,8 @@ pushSpeed = 0
 pushSpeedAdd = 0.1
 strokes = 0
 object = nil
+x = 0
+
 
 on :key_held do |event|
     case event.key
@@ -119,14 +123,32 @@ end
 
 on :mouse_down do |event|
     case event.button
+
     when :left
         mouse_down = true
         circle = Circle.new(x: Window.mouse_x, y: Window.mouse_y, radius: 1)
-        if circle && circle_hit_golfBall?(golfBall, circle) && first_time && fase == 6
+        if circle && circle_hit_golfBall?(golfBall, circle) && first_time && fase == 6 && x != 1
             start_position_x = event.x
             start_position_y = event.y
             first_time = false
+            x = 1
+            puts start_position_x
         end
+        position_x = event.x
+        position_y = event.y
+ 
+        puts position_x
+        if start_position_x != nil || start_position_y != nil
+            if start_position_x > position_x 
+                powerDot1.x += start_position_x - position_x 
+            end
+
+
+            
+
+
+
+        end   
         circle.remove
     end
 end
@@ -140,9 +162,13 @@ on :mouse_up do |event|
             velocity_y += (start_position_y - event.y) / 10.0
             first_time = true
             strokes += 1
+            x = 0
         end
     end
 end
+
+
+
 
 
 
