@@ -5,6 +5,9 @@ set width: 900, height: 700
 set background: 'black'
 set z: 1
 
+get :mouse_x
+get :mouse_y
+
 
 golfBall = Circle.new(x: 200, y: 300, radius: 20, color: 'white', z:10)
 hole = Circle.new(x:700, y: 300, radius: 25, color: 'black', z:8)
@@ -133,22 +136,8 @@ on :mouse_down do |event|
             first_time = false
             x = 1
             puts start_position_x
-        end
-        position_x = event.x
-        position_y = event.y
- 
-        puts position_x
-        if start_position_x != nil || start_position_y != nil
-            if start_position_x > position_x 
-                powerDot1.x += start_position_x - position_x 
-            end
-
-
-            
-
-
-
-        end   
+            powerDot1.add
+        end 
         circle.remove
     end
 end
@@ -164,6 +153,7 @@ on :mouse_up do |event|
             strokes += 1
             x = 0
         end
+        powerDot1.remove
     end
 end
 
@@ -271,6 +261,14 @@ update do
             velocity_y *= -1
         end
     end  
+
+    if start_position_x != nil || start_position_y != nil 
+        powerDot1.x = golfBall.x + (start_position_x - Window.mouse_x)
+        powerDot1.y = golfBall.y + (start_position_y - Window.mouse_y)
+
+
+    end 
+
     golfBall.x += velocity_x
     golfBall.y += velocity_y
     velocity_x *= friction
