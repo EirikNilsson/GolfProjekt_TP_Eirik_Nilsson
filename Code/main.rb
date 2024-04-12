@@ -12,17 +12,20 @@ get :mouse_y
 golfBall = Circle.new(x: 200, y: 300, radius: 20, color: 'white', z:10)
 hole = Circle.new(x:700, y: 300, radius: 25, color: 'black', z:8)
 border = Rectangle.new(color: 'gray', width:825, height:625, x: 37.5, y: 37.5)
-map = Rectangle.new(x: 50, y: 50, width: 800, height: 600, color: '#109611', z:2)
+map = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\map.jpg', x: 50, y: 50, width: 800, height: 600, color: '#109611', z:2)
 obstacle1 = Rectangle.new(width: 50, height: 200, x: 500, y: 200, color: 'red', z: 6)
-obstacle2 = Rectangle.new(x: 500, y: 400, width:200, height:50, color: 'blue', z: 7)
-fase_text = Text.new('', x: 650, y:70, color: 'black', z: 100)
-stroke_text = Text.new('Strokes: 0', x: 400, y: 70, color: 'black', z: 100, size: 20)
-count_strokes = Text.new('', x: 350, y: 300, color: 'black', z: 100, size: 50)
+obstacle2 = Rectangle.new(x: 500, y: 400, width:200, height:50, color: '#0b1aa1', z: 7)
+fase_text = Text.new('', x: 650, y:70, color: 'white', z: 100)
+stroke_text = Text.new('Strokes: 0', x: 400, y: 70, color: 'white', z: 100, size: 20)
+count_strokes = Text.new('', x: 350, y: 300, color: 'white', z: 100, size: 50)
 small_hill = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\small_hill.png', x:300, y:50, width: 300, height: 300, z: 5)
 pit = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\pit.png', x:300, y:350, width: 300, height: 300, z: 5)
-powerDot1 = Circle.new(radius: 8, x: 50, color: 'red', z: 1000)
-powerDot2 = Circle.new(radius: 6, x: 70)
-powerDot3 = Circle.new(radius: 4, x: 90)
+powerDot1 = Circle.new(radius: 8, z: 1000)
+powerDot2 = Circle.new(radius: 6, z: 1000)
+powerDot3 = Circle.new(radius: 4, z: 1000)
+powerDot1.remove
+powerDot2.remove
+powerDot3.remove
 
 
 start_position_x = nil
@@ -137,6 +140,8 @@ on :mouse_down do |event|
             x = 1
             puts start_position_x
             powerDot1.add
+            powerDot2.add
+            powerDot3.add
         end 
         circle.remove
     end
@@ -154,6 +159,8 @@ on :mouse_up do |event|
             x = 0
         end
         powerDot1.remove
+        powerDot2.remove
+        powerDot3.remove
     end
 end
 
@@ -262,12 +269,47 @@ update do
         end
     end  
 
-    if start_position_x != nil || start_position_y != nil 
-        powerDot1.x = golfBall.x + (start_position_x - Window.mouse_x)
-        powerDot1.y = golfBall.y + (start_position_y - Window.mouse_y)
-
-
-    end 
+    if start_position_x != nil && start_position_y != nil && mouse_down == true
+        distance_x = golfBall.x - Window.mouse_x
+        distance_y = golfBall.y - Window.mouse_y
+    
+        angle = Math.atan2(distance_y, distance_x)
+        
+        distance_from_golfball = Math.sqrt(distance_x**2 + distance_y**2)
+    
+        if (distance_from_golfball) > 40 
+            powerDot1.color = 'green'
+            powerDot1.add
+            powerDot1.x = golfBall.x + 80 * Math.cos(angle)
+            powerDot1.y = golfBall.y + 80 * Math.sin(angle)
+            if (distance_from_golfball) > 100
+                powerDot1.color = 'orange'
+                powerDot2.color = 'orange'
+                powerDot2.add
+                powerDot2.x = golfBall.x + 170 * Math.cos(angle)
+                powerDot2.y = golfBall.y + 140 * Math.sin(angle)
+                if (distance_from_golfball) > 200
+                    powerDot1.color = '#910000'
+                    powerDot2.color = '#910000'
+                    powerDot3.color = '#910000'
+                    powerDot3.add
+                    powerDot3.x = golfBall.x + 250 * Math.cos(angle)
+                    powerDot3.y = golfBall.y + 200 * Math.sin(angle)
+                else
+                    powerDot3.remove
+                end
+            else
+                powerDot2.remove
+                powerDot3.remove
+            end
+        else 
+            powerDot1.remove
+            powerDot2.remove
+            powerDot3.remove
+        end
+        
+    end
+    
 
     golfBall.x += velocity_x
     golfBall.y += velocity_y
