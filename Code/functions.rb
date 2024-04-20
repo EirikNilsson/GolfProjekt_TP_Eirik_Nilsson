@@ -43,10 +43,10 @@ def golfBall_hit_water?(golfBall, water)
 end
 
 
-def check_collision_with_screen(ball)
-    if ball.x <= 70 || ball.x >= ((Window.width - 30) - ball.radius * 2)
+def check_collision_with_screen(ball, border, border2)
+    if ball.x <= border2 || ball.x >= ((Window.width - border) - ball.radius * 2)
         return :x
-    elsif ball.y <= 70 || ball.y >= ((Window.height - 30) - ball.radius * 2)  
+    elsif ball.y <= border2 || ball.y >= ((Window.height - border) - ball.radius * 2)  
         return :y
     else
         return nil
@@ -54,15 +54,7 @@ def check_collision_with_screen(ball)
 end
 
 
-def check_collision_with_screen(ball)
-    if ball.x <= 70 || ball.x >= ((Window.width - 30) - ball.radius * 2)
-        return :x
-    elsif ball.y <= 70 || ball.y >= ((Window.height - 30) - ball.radius * 2)  
-        return :y
-    else
-        return nil
-    end
-end
+
 
 
         

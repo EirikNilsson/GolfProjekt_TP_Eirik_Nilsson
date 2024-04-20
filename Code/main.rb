@@ -15,8 +15,8 @@ powerDot2 = Circle.new(radius: 6, z: 1000)
 powerDot3 = Circle.new(radius: 4, z: 1000)
 border = Rectangle.new(color: 'gray', width:825, height:625, x: 37.5, y: 37.5)
 map = Rectangle.new( x: 50, y: 50, width: 800, height: 600, color: '#109611', z:2)
-obstacle1 = Rectangle.new(width: 50, height: 200, x: 600, y: 200, color: 'red', z: 6)
-obstacle2 = Rectangle.new(width: 200, height: 50, x: 650, y: 150, color: '#0b1aa1', z: 7)
+obstacle1 = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\obstacle2.png', width: 50, height: 200, x: 600, y: 200, z: 6)
+obstacle2 = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\obstacle1.png', width: 200, height: 50, x: 650, y: 150, z: 7)
 scoreboard = Rectangle.new(x: 70, y: 70, width: 100, height: 150, color: 'black', z: 8)
 player_text = Text.new('Select number of players 1-5', x: 120, y: 200, size: 50, color: 'white', z: 11)
 scoreboard_text = Text.new('Resent strikes:', x: 80, y: 80, color: 'white', size: 11, z: 9)
@@ -30,8 +30,8 @@ stroke_text = Text.new('', x: 400, y: 70, color: 'white', z: 100, size: 20)
 count_strikes = Text.new('', x: 350, y: 300, color: 'white', z: 100, size: 50)
 small_hill = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\small_hill.png', x:300, y:50, width: 300, height: 300, z: 5)
 pit = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\pit.png', x:500, y:350, width: 300, height: 300, z: 5)
-sand = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\sand.jpg', x: 200, y: 400, width: 220, height: 180, z: 5)
-water = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\water.png', x: 100, y: 100, width: 300, height: 500, z: 3)
+sand = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\sand.jpg', x: 100, y: 500, width: 220, height: 180, z: 5)
+water = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\water.png', x: 100, y: 100, width: 150, height: 250, z: 3)
 water_up = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\water_up.png', x: water.x, y: water.y, width: water.width, height: water.height, z: water.z)
 water_down = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\water_down.png', x: water.x, y: water.y, width: water.width, height: water.height, z: water.z)
 water_right = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\water_right.png', x: water.x, y: water.y, width: water.width, height: water.height, z: water.z)
@@ -74,6 +74,8 @@ obstacle = nil
 small_hill_radius = 150
 pit_radius = 150
 list_removed = false
+border = 30
+border2 = 70
 
 on :key_held do |event|
     case event.key
@@ -95,8 +97,12 @@ on :key_held do |event|
                 small_hill_radius += 2.5
             elsif fase == 3
                 pit_radius += 2.5
-            elsif fase == 5
-                hole.radius += 1
+            elsif fase == 5 
+                obstacle.radius += 1
+            elsif fase == 9
+                obstacle.radius += 1
+                border2 += 1
+                border -= 1
             end
 
 
@@ -112,7 +118,11 @@ on :key_held do |event|
             elsif fase == 3 && pit.width > 10
                 pit_radius -= 2.5
             elsif fase == 5 && hole.radius > golfBall.radius
-                hole.radius -= 1
+                obstacle.radius -= 1
+            elsif fase == 9  && obstacle.radius > 10
+                obstacle.radius -= 1
+                border += 1
+                border2 -= 1
             end
         end
     end
@@ -240,7 +250,7 @@ end
 
 on :key_up do |event|
     case event.key
-    when 'n'
+    when 'return'
         if fase != 10 && playerAmount != 0
             if fase == 9
                 golfball_starting_position_x = golfBall.x
@@ -351,6 +361,7 @@ update do
         scoreboard.add
         scoreboard_text.add
         stroke_text.add
+        golfBall.add
     elsif playerAmount == 0 
         player_text.text = 'Select number of players (1-5)'
         obstacle1.remove
@@ -363,6 +374,7 @@ update do
         stroke_text.remove
         water.remove
         sand.remove
+        golfBall.remove
     end
 
     water_up.x = water.x 
@@ -517,12 +529,13 @@ update do
     
     elsif fase == 9
         golfBall.add
+        obstacle = golfBall
     else
         obstacle = nil
     end
 
     
-    collision = check_collision_with_screen(golfBall)
+    collision = check_collision_with_screen(golfBall, border, border2)
 
     if collision == :x
         velocity_x *= -1
