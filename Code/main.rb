@@ -76,6 +76,10 @@ pit_radius = 150
 list_removed = false
 border = 30
 border2 = 70
+obstacle1_exist = true 
+obstacle2_exist = true
+water_exist = true
+sand_exist = true
 
 on :key_held do |event|
     case event.key
@@ -259,6 +263,80 @@ on :key_up do |event|
             end
             fase += 1
         end
+    when 'backspace'
+        if fase < 10
+            if fase == 1 || fase == 2 || fase == 6 || fase == 7 
+                obstacle.width = 0
+                obstacle.height = 0
+            elsif fase == 3
+                obstacle.width = 0
+                obstacle.height = 0
+                pit_radius = 0
+            elsif fase == 4
+                obstacle.width = 0
+                obstacle.height = 0
+                small_hill_radius = 0
+            end
+
+            if fase == 1
+                obstacle1_exist = false
+            end
+            if fase == 2 
+                obstacle2_exist = false
+            end
+            if fase == 6
+                sand_exist = true
+            end
+            if fase == 7 
+                water_exist = true
+            end
+            if fase == 8
+                water_direction = nil
+                water_up.remove
+                water_down.remove
+                water_left.remove
+                water_right.remove
+                water.add
+            end
+            if fase != 5 && fase != 9
+                obstacle.remove
+            end
+
+        end
+    when 'z'
+        if fase < 10
+            obstacle.add
+            if fase == 1
+                obstacle1_exist = true
+                obstacle.width = 50
+                obstacle.height = 200
+            elsif fase == 2
+                obstacle2_exist = true
+                obstacle.width = 200
+                obstacle.height = 50
+            elsif fase == 3
+                obstacle.width = 300
+                obstacle.height = 300
+                pit_radius = 150
+            elsif fase == 4
+                obstacle.width = 300
+                obstacle.height = 300
+                small_hill_radius = 150
+            elsif fase == 6
+                sand_exist = true
+                obstacle.width = 220
+                obstacle.height = 180
+            elsif fase == 7
+                water_exist = true
+                obstacle.width = 150
+                obstacle.height = 250
+            end
+        end
+    
+
+        
+
+
     when '1'
         if everpressed == false
             scoreboard_text1.text = "Player 1"
@@ -373,6 +451,10 @@ update do
         hole.remove
         stroke_text.remove
         water.remove
+        water_up.remove
+        water_down.remove
+        water_left.remove
+        water_right.remove
         sand.remove
         golfBall.remove
     end
@@ -542,47 +624,54 @@ update do
     elsif collision == :y
         velocity_y *= -1
     end
-
-    if golfBall.x + golfBall.radius >= obstacle1.x && golfBall.x - golfBall.radius <= obstacle1.x + obstacle1.width &&
-        golfBall.y + golfBall.radius >= obstacle1.y && golfBall.y - golfBall.radius <= obstacle1.y + obstacle1.height
-        if golfBall.x + golfBall.radius >= obstacle1.x && golfBall.x < obstacle1.x && velocity_x > 0
-            velocity_x *= -1
-        elsif golfBall.x - golfBall.radius <= obstacle1.x + obstacle1.width && golfBall.x > obstacle1.x + obstacle1.width && velocity_x < 0
-            velocity_x *= -1
-        elsif golfBall.y + golfBall.radius >= obstacle1.y && golfBall.y < obstacle1.y && velocity_y > 0
-            velocity_y *= -1
-        elsif golfBall.y - golfBall.radius <= obstacle1.y + obstacle1.height && golfBall.y > obstacle1.y + obstacle1.height && velocity_y < 0
-            velocity_y *= -1
+    
+    if obstacle1_exist
+        if golfBall.x + golfBall.radius >= obstacle1.x && golfBall.x - golfBall.radius <= obstacle1.x + obstacle1.width &&
+            golfBall.y + golfBall.radius >= obstacle1.y && golfBall.y - golfBall.radius <= obstacle1.y + obstacle1.height
+            if golfBall.x + golfBall.radius >= obstacle1.x && golfBall.x < obstacle1.x && velocity_x > 0
+                velocity_x *= -1
+            elsif golfBall.x - golfBall.radius <= obstacle1.x + obstacle1.width && golfBall.x > obstacle1.x + obstacle1.width && velocity_x < 0
+                velocity_x *= -1
+            elsif golfBall.y + golfBall.radius >= obstacle1.y && golfBall.y < obstacle1.y && velocity_y > 0
+                velocity_y *= -1
+            elsif golfBall.y - golfBall.radius <= obstacle1.y + obstacle1.height && golfBall.y > obstacle1.y + obstacle1.height && velocity_y < 0
+                velocity_y *= -1
+            end
         end
     end
 
-    if golfBall.x + golfBall.radius >= obstacle2.x && golfBall.x - golfBall.radius <= obstacle2.x + obstacle2.width &&
-        golfBall.y + golfBall.radius >= obstacle2.y && golfBall.y - golfBall.radius <= obstacle2.y + obstacle2.height
-        if golfBall.x + golfBall.radius >= obstacle2.x && golfBall.x < obstacle2.x && velocity_x > 0
-            velocity_x *= -1
-        elsif golfBall.x - golfBall.radius <= obstacle2.x + obstacle2.width && golfBall.x > obstacle2.x + obstacle2.width && velocity_x < 0
-            velocity_x *= -1
-        elsif golfBall.y + golfBall.radius >= obstacle2.y && golfBall.y < obstacle2.y && velocity_y > 0
-            velocity_y *= -1
-        elsif golfBall.y - golfBall.radius <= obstacle2.y + obstacle2.height && golfBall.y > obstacle2.y + obstacle2.height && velocity_y < 0
-            velocity_y *= -1
+    if obstacle2_exist 
+        if golfBall.x + golfBall.radius >= obstacle2.x && golfBall.x - golfBall.radius <= obstacle2.x + obstacle2.width &&
+            golfBall.y + golfBall.radius >= obstacle2.y && golfBall.y - golfBall.radius <= obstacle2.y + obstacle2.height
+            if golfBall.x + golfBall.radius >= obstacle2.x && golfBall.x < obstacle2.x && velocity_x > 0
+                velocity_x *= -1
+            elsif golfBall.x - golfBall.radius <= obstacle2.x + obstacle2.width && golfBall.x > obstacle2.x + obstacle2.width && velocity_x < 0
+                velocity_x *= -1
+            elsif golfBall.y + golfBall.radius >= obstacle2.y && golfBall.y < obstacle2.y && velocity_y > 0
+                velocity_y *= -1
+            elsif golfBall.y - golfBall.radius <= obstacle2.y + obstacle2.height && golfBall.y > obstacle2.y + obstacle2.height && velocity_y < 0
+                velocity_y *= -1
+            end
+        end 
+    end 
+    if sand_exist
+        if golfBall_hit_sand?(golfBall, sand) && friction == 0.95
+            friction = 0.85
+        else 
+            friction = 0.95
         end
-    end  
-
-    if golfBall_hit_sand?(golfBall, sand) && friction == 0.95
-        friction = 0.85
-    else 
-        friction = 0.95
     end
 
-    if golfBall_hit_water?(golfBall, water) && water_direction == "up"
-        velocity_y -= 0.1
-    elsif golfBall_hit_water?(golfBall, water) && water_direction == "down"
-        velocity_y += 0.1
-    elsif golfBall_hit_water?(golfBall, water) && water_direction == "left"
-        velocity_x -= 0.1
-    elsif golfBall_hit_water?(golfBall, water) && water_direction == "right"
-        velocity_x += 0.1
+    if water_exist
+        if golfBall_hit_water?(golfBall, water) && water_direction == "up"
+            velocity_y -= 0.1
+        elsif golfBall_hit_water?(golfBall, water) && water_direction == "down"
+            velocity_y += 0.1
+        elsif golfBall_hit_water?(golfBall, water) && water_direction == "left"
+            velocity_x -= 0.1
+        elsif golfBall_hit_water?(golfBall, water) && water_direction == "right"
+            velocity_x += 0.1
+        end
     end
 
     if start_position_x != nil && start_position_y != nil && mouse_down == true
