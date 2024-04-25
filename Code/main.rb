@@ -28,6 +28,7 @@ scoreboard_text5 = Text.new('', x: 90, y: 180, color: 'blue', size: 11, z: 9)
 fase_text = Text.new('', x: 650, y:70, color: 'white', z: 100)
 stroke_text = Text.new('', x: 400, y: 70, color: 'white', z: 100, size: 20)
 count_strikes = Text.new('', x: 350, y: 300, color: 'white', z: 100, size: 50)
+volume = Text.new('Volume: 50', x: 700, y: 600, z: 1001, color: 'black')
 small_hill = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\small_hill.png', x:300, y:50, width: 300, height: 300, z: 5)
 pit = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\pit.png', x:500, y:350, width: 300, height: 300, z: 5)
 sand = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\sand.jpg', x: 100, y: 500, width: 220, height: 180, z: 5)
@@ -36,6 +37,9 @@ water_up = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programeri
 water_down = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\water_down.png', x: water.x, y: water.y, width: water.width, height: water.height, z: water.z)
 water_right = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\water_right.png', x: water.x, y: water.y, width: water.width, height: water.height, z: water.z)
 water_left = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\water_left.png', x: water.x, y: water.y, width: water.width, height: water.height, z: water.z)
+hit = Sound.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\sound\hit.wav')
+golfclap = Music.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\sound\golfclap.mp3')
+background_music = Music.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\sound\background_music.wav')
 
 powerDot1.remove
 powerDot2.remove
@@ -46,7 +50,9 @@ water_left.remove
 water_right.remove
 water_up.remove
 
-
+background_music.play 
+background_music.loop = true
+background_music.volume = 50
 
 
 water_direction = nil
@@ -135,7 +141,6 @@ end
 
 on :key_held do |event|
     case event.key
-
     when 'up'
         if fase == 1
             obstacle1.y -= 5
@@ -263,6 +268,23 @@ on :key_up do |event|
             end
             fase += 1
         end
+    when 'n'
+        background_music.volume = 50
+        volume.text = "Volume: #{background_music.volume}"
+    when 'm'
+        background_music.volume = 0
+        volume.text = "Volume: mute"
+    when 'h'
+        background_music.volume += 10
+        volume.text = "Volume: #{background_music.volume}"
+    when 'j'
+        background_music.volume -= 10
+        volume.text = "Volume: #{background_music.volume}"
+        if background_music.volume == 0
+            volume.text = "Volume: mute"
+        end
+
+
     when 'backspace'
         if fase < 10
             if fase == 1 || fase == 2 || fase == 6 || fase == 7 
@@ -522,6 +544,8 @@ update do
         pushSpeed = 0
     end
     if golfBall_in_hole?(golfBall, hole) && velocity_x < 7 && velocity_y < 7 && playerAmount != 0 && fase == 10
+        golfclap.play
+        golfclap.fadeout(3000)
         golfBall.x = golfball_starting_position_x
         golfBall.y = golfball_starting_position_y
         velocity_x = 0
@@ -529,9 +553,7 @@ update do
         player += 1
         count_strikes.color = golfBall.color
         count_strikes.text = "Hole in #{strikes}!"
-        player1_strikes = strikes 
-        if player == 1 && playerAmount >= 1
-            player2_strikes = strikes  
+        if player == 1 && playerAmount >= 1 
             golfBall.color = 'yellow'
             if playerAmount == 1 
                 player = 0
@@ -539,8 +561,7 @@ update do
             end
             scoreboard_text1.x = 90
             scoreboard_text1.text = "#{strikes} strikes"
-        elsif player == 2 && playerAmount >= 2
-            player3_strikes = strikes  
+        elsif player == 2 && playerAmount >= 2 
             golfBall.color = 'brown' 
             if playerAmount == 2
                 player = 0
@@ -549,7 +570,6 @@ update do
             scoreboard_text2.x = 90
             scoreboard_text2.text = "#{strikes} strikes"
         elsif player == 3 && playerAmount >= 3
-            player4_strikes = strikes  
             golfBall.color = 'fuchsia' 
             if playerAmount == 3
                 player = 0
@@ -558,7 +578,6 @@ update do
             scoreboard_text3.x = 90
             scoreboard_text3.text = "#{strikes} strikes"
         elsif player == 4 && playerAmount >= 4
-            player5_strikes = strikes  
             golfBall.color = 'blue' 
             if playerAmount == 4
                 player = 0
@@ -566,8 +585,7 @@ update do
             end
             scoreboard_text4.x = 90
             scoreboard_text4.text = "#{strikes} strikes"
-        elsif player == 5 && playerAmount >= 5
-            player6_strikes = strikes  
+        elsif player == 5 && playerAmount >= 5 
             golfBall.color = 'white' 
             if playerAmount == 5
                 player = 0
@@ -621,8 +639,10 @@ update do
 
     if collision == :x
         velocity_x *= -1
+        hit.play
     elsif collision == :y
         velocity_y *= -1
+        hit.play
     end
     
     if obstacle1_exist
@@ -630,12 +650,16 @@ update do
             golfBall.y + golfBall.radius >= obstacle1.y && golfBall.y - golfBall.radius <= obstacle1.y + obstacle1.height
             if golfBall.x + golfBall.radius >= obstacle1.x && golfBall.x < obstacle1.x && velocity_x > 0
                 velocity_x *= -1
+                hit.play
             elsif golfBall.x - golfBall.radius <= obstacle1.x + obstacle1.width && golfBall.x > obstacle1.x + obstacle1.width && velocity_x < 0
                 velocity_x *= -1
+                hit.play
             elsif golfBall.y + golfBall.radius >= obstacle1.y && golfBall.y < obstacle1.y && velocity_y > 0
                 velocity_y *= -1
+                hit.play
             elsif golfBall.y - golfBall.radius <= obstacle1.y + obstacle1.height && golfBall.y > obstacle1.y + obstacle1.height && velocity_y < 0
                 velocity_y *= -1
+                hit.play
             end
         end
     end
@@ -645,12 +669,16 @@ update do
             golfBall.y + golfBall.radius >= obstacle2.y && golfBall.y - golfBall.radius <= obstacle2.y + obstacle2.height
             if golfBall.x + golfBall.radius >= obstacle2.x && golfBall.x < obstacle2.x && velocity_x > 0
                 velocity_x *= -1
+                hit.play
             elsif golfBall.x - golfBall.radius <= obstacle2.x + obstacle2.width && golfBall.x > obstacle2.x + obstacle2.width && velocity_x < 0
                 velocity_x *= -1
+                hit.play
             elsif golfBall.y + golfBall.radius >= obstacle2.y && golfBall.y < obstacle2.y && velocity_y > 0
                 velocity_y *= -1
+                hit.play
             elsif golfBall.y - golfBall.radius <= obstacle2.y + obstacle2.height && golfBall.y > obstacle2.y + obstacle2.height && velocity_y < 0
                 velocity_y *= -1
+                hit.play
             end
         end 
     end 
