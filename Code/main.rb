@@ -1,22 +1,31 @@
 require 'ruby2d'
 require 'C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\Code\functions.rb'
 
+# Inställningar för fönstret
 set width: 900, height: 700 
 set background: 'black'
 set z: 1
 
+# Hämtar musens x- och y-position
 get :mouse_x
 get :mouse_y
 
+# Skapar golfbollen och hålet
 golfBall = Circle.new(x: 200, y: 300, radius: 20, color: 'white', z:10)
 hole = Circle.new(x:750, y: 300, radius: 25, color: 'black', z:8)
+
+# Skapar power-dots (används troligen för att visa kraft vid puttning)
 powerDot1 = Circle.new(radius: 8, z: 1000)
 powerDot2 = Circle.new(radius: 6, z: 1000)
 powerDot3 = Circle.new(radius: 4, z: 1000)
+
+# Skapar banans gränser och hinder
 border = Rectangle.new(color: 'gray', width:825, height:625, x: 37.5, y: 37.5)
-map = Rectangle.new( x: 50, y: 50, width: 800, height: 600, color: '#109611', z:2)
+map = Rectangle.new(x: 50, y: 50, width: 800, height: 600, color: '#109611', z:2)
 obstacle1 = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\obstacle2.png', width: 50, height: 200, x: 600, y: 200, z: 6)
 obstacle2 = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\obstacle1.png', width: 200, height: 50, x: 650, y: 150, z: 7)
+
+# Skapar poängtavla och texter
 scoreboard = Rectangle.new(x: 70, y: 70, width: 100, height: 150, color: 'black', z: 8)
 player_text = Text.new('Select number of players 1-5', x: 120, y: 200, size: 50, color: 'white', z: 11)
 scoreboard_text = Text.new('Resent strikes:', x: 80, y: 80, color: 'white', size: 11, z: 9)
@@ -29,6 +38,8 @@ fase_text = Text.new('', x: 650, y:70, color: 'white', z: 100)
 stroke_text = Text.new('', x: 400, y: 70, color: 'white', z: 100, size: 20)
 count_strikes = Text.new('', x: 350, y: 300, color: 'white', z: 100, size: 50)
 volume = Text.new('Volume: 50', x: 700, y: 600, z: 1001, color: 'black')
+
+# Skapar ytterligare hinder
 small_hill = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\small_hill.png', x:300, y:50, width: 300, height: 300, z: 5)
 pit = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\pit.png', x:500, y:350, width: 300, height: 300, z: 5)
 sand = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\sand.jpg', x: 100, y: 500, width: 220, height: 180, z: 5)
@@ -37,24 +48,27 @@ water_up = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programeri
 water_down = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\water_down.png', x: water.x, y: water.y, width: water.width, height: water.height, z: water.z)
 water_right = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\water_right.png', x: water.x, y: water.y, width: water.width, height: water.height, z: water.z)
 water_left = Image.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\img\water_left.png', x: water.x, y: water.y, width: water.width, height: water.height, z: water.z)
+
+# Skapar ljud och musik
 hit = Sound.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\sound\hit.wav')
 golfclap = Music.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\sound\golfclap.mp3')
 background_music = Music.new('C:\Users\eirik.haugennilsson\Desktop\Tillämpad_Programering\GolfProjekt_TP_Eirik_Nilsson\sound\background_music.wav')
 
+# Tar bort power-dots och vattendelar initialt
 powerDot1.remove
 powerDot2.remove
 powerDot3.remove
-
 water_down.remove
 water_left.remove
 water_right.remove
 water_up.remove
 
+# Spelar bakgrundsmusik i en loop
 background_music.play 
 background_music.loop = true
 background_music.volume = 50
 
-
+# Initialiserar variabler för spelets logik
 water_direction = nil
 start_position_x = nil
 start_position_y = nil
@@ -87,6 +101,7 @@ obstacle2_exist = true
 water_exist = true
 sand_exist = true
 
+# Tangentbordsinteraktioner för att justera objekt och rörelse
 on :key_held do |event|
     case event.key
     when 'w'
@@ -138,7 +153,7 @@ on :key_held do |event|
     end
 end
 
-
+# Tangentbordsinteraktioner för att justera spelets fas
 on :key_held do |event|
     case event.key
     when 'up'
@@ -257,6 +272,7 @@ on :key_held do |event|
     end
 end
 
+# Justera ljud och hinders storlek och bestämmer golfbollens startposition 
 on :key_up do |event|
     case event.key
     when 'return'
@@ -264,7 +280,6 @@ on :key_up do |event|
             if fase == 9
                 golfball_starting_position_x = golfBall.x
                 golfball_starting_position_y = golfBall.y
-                puts golfball_starting_position_x
             end
             fase += 1
         end
@@ -358,7 +373,7 @@ on :key_up do |event|
 
         
 
-
+    # Väljer antal spelare
     when '1'
         if everpressed == false
             scoreboard_text1.text = "Player 1"
@@ -411,12 +426,15 @@ on :key_up do |event|
 
 end
 
+# När musen är nedtryckt
 on :mouse_down do |event|
     case event.button
 
     when :left
         mouse_down = true
         circle = Circle.new(x: Window.mouse_x, y: Window.mouse_y, radius: 1)
+
+        # Om mus träffat golfboll
         if circle && circle_hit_golfBall?(golfBall, circle) && first_time && fase == 10 && x != 1
             start_position_x = event.x
             start_position_y = event.y
@@ -430,11 +448,13 @@ on :mouse_down do |event|
     end
 end
 
+# När mus uppe och har träffat bollen innan, bestäm musens positon
 on :mouse_up do |event|
     case event.button
     when :left
         mouse_down = false
         if !first_time && fase == 10
+            # Räknar ut avstånd mellan boll och musens position och skjuter iväg bollen
             velocity_x += (start_position_x - event.x) / 10.0
             velocity_y += (start_position_y - event.y) / 10.0
             first_time = true
@@ -447,12 +467,7 @@ on :mouse_up do |event|
     end
 end
 
-
-
-
-
-
-
+# Updaterar spelet varje frame
 update do
     fase_text.text = "#{object(object, fase)}"
     stroke_text.text = "Strikes: #{strikes}"
@@ -480,7 +495,7 @@ update do
         sand.remove
         golfBall.remove
     end
-
+    # Håller vattendragen och vattnet på samma plats och samma storlek
     water_up.x = water.x 
     water_up.y = water.y
     water_down.x = water.x 
@@ -489,7 +504,6 @@ update do
     water_left.y = water.y
     water_right.x = water.x 
     water_right.y = water.y
-
     water_up.width = water.width 
     water_up.height = water.height
     water_down.width = water.width 
@@ -502,7 +516,7 @@ update do
         
 
     dist_golfBall_small_hill = Math.sqrt((golfBall.x - (small_hill.x + small_hill_radius))**2 + (golfBall.y - (small_hill.y + small_hill_radius))**2)
-
+    # Om golfboll träffat kulle
     if dist_golfBall_small_hill < small_hill_radius && velocity_x != 0
         pushDir1 = Math.atan2(golfBall.y - (small_hill.y + small_hill_radius), golfBall.x - (small_hill.x + small_hill_radius))
         pushSpeed += pushSpeedAdd
@@ -523,7 +537,7 @@ update do
         pushSpeed = 0
     end
     dist_golfBall_pit = Math.sqrt((golfBall.x - (pit.x + pit_radius))**2 + (golfBall.y - (pit.y + pit_radius))**2)
-    
+    # Om golfboll träffat grop
     if dist_golfBall_pit < pit_radius && velocity_x != 0
         pushDir2 = Math.atan2(golfBall.y - (pit.y + pit_radius), golfBall.x - (pit.x + pit_radius))
         pushSpeed += pushSpeedAdd   
@@ -543,6 +557,7 @@ update do
     else 
         pushSpeed = 0
     end
+    # Om golfboll i hål
     if golfBall_in_hole?(golfBall, hole) && velocity_x < 7 && velocity_y < 7 && playerAmount != 0 && fase == 10
         golfclap.play
         golfclap.fadeout(3000)
@@ -595,7 +610,7 @@ update do
             scoreboard_text5.text = "#{strikes} strikes"
         end
  
-
+        # Vänta 1 sekund innan kod fortsätter
         Thread.new do
             sleep(1)
             count_strikes.text = ""
@@ -646,6 +661,7 @@ update do
     end
     
     if obstacle1_exist
+        # Får bollen att studsa på obsticle 1
         if golfBall.x + golfBall.radius >= obstacle1.x && golfBall.x - golfBall.radius <= obstacle1.x + obstacle1.width &&
             golfBall.y + golfBall.radius >= obstacle1.y && golfBall.y - golfBall.radius <= obstacle1.y + obstacle1.height
             if golfBall.x + golfBall.radius >= obstacle1.x && golfBall.x < obstacle1.x && velocity_x > 0
@@ -665,6 +681,7 @@ update do
     end
 
     if obstacle2_exist 
+        # Får bollen att studsa på obsticle 2
         if golfBall.x + golfBall.radius >= obstacle2.x && golfBall.x - golfBall.radius <= obstacle2.x + obstacle2.width &&
             golfBall.y + golfBall.radius >= obstacle2.y && golfBall.y - golfBall.radius <= obstacle2.y + obstacle2.height
             if golfBall.x + golfBall.radius >= obstacle2.x && golfBall.x < obstacle2.x && velocity_x > 0
@@ -682,6 +699,7 @@ update do
             end
         end 
     end 
+    # Får golfbollen att glida långsammare på sand
     if sand_exist
         if golfBall_hit_sand?(golfBall, sand) && friction == 0.95
             friction = 0.85
@@ -702,6 +720,7 @@ update do
         end
     end
 
+    # Powerdots 
     if start_position_x != nil && start_position_y != nil && mouse_down == true
         distance_x = golfBall.x - Window.mouse_x
         distance_y = golfBall.y - Window.mouse_y
@@ -738,6 +757,8 @@ update do
             powerDot3.remove
         end   
     end
+
+    # Påverkar golfbollens position
     golfBall.x += velocity_x
     golfBall.y += velocity_y
     velocity_x *= friction
